@@ -9,7 +9,6 @@ import (
 	"bytes"
 	"syscall"
 	"unsafe"
-	"fmt"
 
 	. "github.com/naimols/go-libnss/structs"
 )
@@ -64,14 +63,15 @@ func go_getgrgid_r(gid uint, grp *C.struct_group, buf *C.char, buflen C.size_t, 
 
 // Sets the C values for libnss
 func setCGroup(p *Group, grp *C.struct_group, buf *C.char, buflen C.size_t, errnop *C.int) Status {
-	size := int(buflen)
-
+	//size := int(buflen)
+	size := int(16384) //accounting for large group sizes
 	if len(p.Groupname)+len(p.Password)+5 > size {
 		*errnop = C.int(syscall.EAGAIN)
 		return StatusTryagain
 	}
 
-	gobuf := C.GoBytes(unsafe.Pointer(buf), C.int(buflen))
+	//gobuf := C.GoBytes(unsafe.Pointer(buf), C.int(buflen))
+	gobuf := C.GoBytes(unsafe.Pointer(buf), C.int(size))
 	b := bytes.NewBuffer(gobuf)
 	b.Reset()
 
@@ -93,8 +93,7 @@ func setCGroup(p *Group, grp *C.struct_group, buf *C.char, buflen C.size_t, errn
 	// sizeof(char*) * (len(src) + 1)
 	sizeOfCharS := unsafe.Sizeof(uintptr(0))
 	length := int(sizeOfCharS) * (len(p.Members) + 1)
-	fmt.Println("DEBUG")
-	fmt.Println("Members: " + p.Members)
+	
 	if length > size {
 		*errnop = C.int(syscall.EAGAIN)
 		return StatusTryagain
