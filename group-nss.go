@@ -64,7 +64,7 @@ func go_getgrgid_r(gid uint, grp *C.struct_group, buf *C.char, buflen C.size_t, 
 // Sets the C values for libnss
 func setCGroup(p *Group, grp *C.struct_group, buf *C.char, buflen C.size_t, errnop *C.int) Status {
 	//size := int(buflen)
-	size := int(16384) //accounting for large group sizes
+	size := int(4096) //accounting for large group sizes - 1024 is orig - 16384 is too big
 	if len(p.Groupname)+len(p.Password)+5 > size {
 		*errnop = C.int(syscall.EAGAIN)
 		return StatusTryagain
