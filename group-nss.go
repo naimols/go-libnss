@@ -93,6 +93,9 @@ func setCGroup(p *Group, grp *C.struct_group, buf *C.char, buflen C.size_t, errn
 	// sizeof(char*) * (len(src) + 1)
 	sizeOfCharS := unsafe.Sizeof(uintptr(0))
 	length := int(sizeOfCharS) * (len(p.Members) + 1)
+	fmt.Println(sizeOfCharS)
+	fmt.Println(length)
+	fmt.Println(p.Members)
 	if length > size {
 		*errnop = C.int(syscall.EAGAIN)
 		return StatusTryagain
@@ -105,7 +108,7 @@ func setCGroup(p *Group, grp *C.struct_group, buf *C.char, buflen C.size_t, errn
 	grp.gr_mem = bufp
 
 	for _, s := range p.Members {
-		fmt.Println(s + "\n")
+		fmt.Println(s)
 		// Check buflen
 		length = len(s) + 1
 		if length > size {
