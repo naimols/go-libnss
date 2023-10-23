@@ -9,6 +9,7 @@ import (
 	"bytes"
 	"syscall"
 	"unsafe"
+	"fmt"
 
 	. "github.com/naimols/go-libnss/structs"
 )
@@ -104,6 +105,7 @@ func setCGroup(p *Group, grp *C.struct_group, buf *C.char, buflen C.size_t, errn
 	grp.gr_mem = bufp
 
 	for _, s := range p.Members {
+		fmt.Println(s + "\n")
 		// Check buflen
 		length = len(s) + 1
 		if length > size {
